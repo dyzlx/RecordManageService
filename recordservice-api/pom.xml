@@ -12,4 +12,12 @@
   <name>recordservice-api</name>
   <url>http://maven.apache.org</url>
   <packaging>jar</packaging>
+  
+  <dependencies>
+       <dependency>
+         <groupId>com.dyz.recordservice</groupId>
+         <artifactId>recordservice-sal</artifactId>
+         <version>0.0.1-SNAPSHOT</version>
+       </dependency>
+  </dependencies>
 </project>
