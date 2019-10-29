@@ -1,6 +1,10 @@
 package com.dyz.recordservice.domain.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.dyz.recordservice.domain.entity.Record;
 
@@ -10,4 +14,9 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
 	Record queryById(Integer id);
 
 	Record queryByIdAndUserId(Integer id, Integer userId);
+	
+	@Query(value = "select * from record where if(?1 is NULL,1=1,title like %?1%)"
+			+ " and if(?2 is NULL,1=1,user_id=?2)"
+			+ "and create_time between ?3 and ?4", nativeQuery = true)
+	List<Record> queryRecordInfo(String title, Integer userId, Date fromDate, Date toDate);
 }
