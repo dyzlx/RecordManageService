@@ -2,6 +2,10 @@ package com.dyz.recordservice.sal.service;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.dyz.recordservice.sal.bo.RecordCreateBo;
 import com.dyz.recordservice.sal.bo.RecordInfoBo;
 import com.dyz.recordservice.sal.bo.RecordQueryBo;
@@ -13,7 +17,7 @@ public interface RecordService {
 	 * @param queryBo
 	 * @return
 	 */
-	List<RecordInfoBo> queryRecordInfo(RecordQueryBo queryBo);
+	List<RecordInfoBo> queryRecordInfo(@NotNull RecordQueryBo queryBo);
 	
 	/**
 	 * 
@@ -21,12 +25,12 @@ public interface RecordService {
 	 * @param userId
 	 * @return
 	 */
-	Integer createRecord(RecordCreateBo createBo, Integer userId);
+	Integer createRecord(MultipartFile[] pictures, @NotNull RecordCreateBo createBo, @NotNull Integer userId);
 	
 	/**
 	 * 
 	 * @param recordId
 	 * @param userId
 	 */
-	void deleteRecord(Integer recordId, Integer userId);
+	void deleteRecord(@NotNull Integer recordId, @NotNull Integer userId);
 }

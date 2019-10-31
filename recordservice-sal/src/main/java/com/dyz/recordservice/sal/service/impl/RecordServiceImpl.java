@@ -1,18 +1,23 @@
 package com.dyz.recordservice.sal.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dyz.filxeservice.client.LogicFileClient;
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
 import com.dyz.recordservice.domain.entity.Record;
+import com.dyz.recordservice.domain.entity.RecordFile;
 import com.dyz.recordservice.domain.repository.RecordFileRepository;
 import com.dyz.recordservice.domain.repository.RecordRepository;
 import com.dyz.recordservice.sal.bo.RecordCreateBo;
@@ -37,7 +42,7 @@ public class RecordServiceImpl implements RecordService {
 	private LogicFileClient logicfileClient;
 
 	@Override
-	public List<RecordInfoBo> queryRecordInfo(RecordQueryBo queryBo) {
+	public List<RecordInfoBo> queryRecordInfo(@NotNull RecordQueryBo queryBo) {
 		log.info("begin to query record info, queryBo = {}", queryBo);
 		if (Objects.isNull(queryBo)) {
 			throw new IllegalParamException(0, "param is null");
@@ -58,13 +63,29 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
-	public Integer createRecord(RecordCreateBo createBo, Integer userId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer createRecord(MultipartFile[] pictures, @NotNull RecordCreateBo createBo, @NotNull Integer userId) {
+		log.info("begin to create record, record title = {}, userId = {}", createBo.getTitle(), userId);
+		if (!ObjectUtils.allNotNull(createBo, userId)) {
+			throw new IllegalParamException(0, "param is null");
+		}
+		Record record = Record.builder().content(createBo.getContent()).createTime(new Date())
+				.title(createBo.getTitle()).userId(userId).build();
+		recordRepository.save(record);
+		log.info("record {} has saved", record);
+		if (Objects.nonNull(pictures)) {
+			log.info("record pictures count is {}, begin to save pictures", pictures.length);
+			List<Integer> pictureIds = logicfileClient.uploadFiles(pictures, false, userId);
+			log.info("pictures have saved, picture ids = {}", pictureIds);
+			for (Integer id : pictureIds) {
+				RecordFile recordFile = RecordFile.builder().fileId(id).recordId(record.getId()).build();
+				recordFileRepository.save(recordFile);
+			}
+		}
+		return record.getId();
 	}
 
 	@Override
-	public void deleteRecord(Integer recordId, Integer userId) {
+	public void deleteRecord(@NotNull Integer recordId, @NotNull Integer userId) {
 		log.info("begin to delete record, recordId = {}, userId = {}", recordId, userId);
 		if (!ObjectUtils.allNotNull(recordId, userId)) {
 			throw new IllegalParamException(0, "param is null");
@@ -75,15 +96,12 @@ public class RecordServiceImpl implements RecordService {
 			throw new NoDataException(0, "no such record");
 		}
 		recordRepository.delete(record);
-		log.info("record object is deleted");
+		log.info("record object is deleted, {}", record);
 		List<Integer> files = recordFileRepository.queryByRecordId(recordId).stream().map(y -> y.getFileId())
 				.collect(Collectors.toList());
 		log.info("delete record files, fileIds = {}", files);
 		if (CollectionUtils.isNotEmpty(files)) {
-			files.stream().forEach(x -> {
-				log.info("tigger logic file client to delete record file");
-				logicfileClient.deleteLogicFile(x);
-			});
+			logicfileClient.deleteLogicFiles(files, userId);
 		}
 		log.info("end of delete record");
 	}
