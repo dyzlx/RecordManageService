@@ -39,7 +39,7 @@ public class RecordServiceImpl implements RecordService {
 	private RecordFileRepository recordFileRepository;
 
 	@Autowired
-	private LogicFileClient logicfileClient;
+	private LogicFileClient logicFileClient;
 
 	@Override
 	public List<RecordInfoBo> queryRecordInfo(@NotNull RecordQueryBo queryBo) {
@@ -74,7 +74,7 @@ public class RecordServiceImpl implements RecordService {
 		log.info("record {} has saved", record);
 		if (Objects.nonNull(pictures)) {
 			log.info("record pictures count is {}, begin to save pictures", pictures.length);
-			List<Integer> pictureIds = logicfileClient.uploadFiles(pictures, false, userId);
+			List<Integer> pictureIds = logicFileClient.uploadFiles(pictures, false, userId);
 			log.info("pictures have saved, picture ids = {}", pictureIds);
 			for (Integer id : pictureIds) {
 				RecordFile recordFile = RecordFile.builder().fileId(id).recordId(record.getId()).build();
@@ -101,7 +101,7 @@ public class RecordServiceImpl implements RecordService {
 				.collect(Collectors.toList());
 		log.info("delete record files, fileIds = {}", files);
 		if (CollectionUtils.isNotEmpty(files)) {
-			logicfileClient.deleteLogicFiles(files, userId);
+			logicFileClient.deleteLogicFiles(files, userId);
 		}
 		log.info("end of delete record");
 	}
