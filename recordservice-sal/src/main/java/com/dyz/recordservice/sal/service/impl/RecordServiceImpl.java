@@ -11,6 +11,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dyz.filxeservice.client.LogicFileClient;
@@ -42,6 +44,7 @@ public class RecordServiceImpl implements RecordService {
 	private LogicFileClient logicFileClient;
 
 	@Override
+	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.REQUIRED)
 	public List<RecordInfoBo> queryRecordInfo(@NotNull RecordQueryBo queryBo) {
 		log.info("begin to query record info, queryBo = {}", queryBo);
 		if (Objects.isNull(queryBo)) {
@@ -63,6 +66,7 @@ public class RecordServiceImpl implements RecordService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.REQUIRED)
 	public Integer createRecord(MultipartFile[] pictures, @NotNull RecordCreateBo createBo, @NotNull Integer userId) {
 		log.info("begin to create record, record title = {}, userId = {}", createBo.getTitle(), userId);
 		if (!ObjectUtils.allNotNull(createBo, userId)) {
@@ -72,7 +76,7 @@ public class RecordServiceImpl implements RecordService {
 				.title(createBo.getTitle()).userId(userId).build();
 		recordRepository.save(record);
 		log.info("record {} has saved", record);
-		if (Objects.nonNull(pictures)) {
+		if (Objects.nonNull(pictures) && pictures.length != 0) {
 			log.info("record pictures count is {}, begin to save pictures", pictures.length);
 			List<Integer> pictureIds = logicFileClient.uploadFiles(pictures, false, userId);
 			log.info("pictures have saved, picture ids = {}", pictureIds);
@@ -81,10 +85,12 @@ public class RecordServiceImpl implements RecordService {
 				recordFileRepository.save(recordFile);
 			}
 		}
+	    log.info("end of create record");
 		return record.getId();
 	}
 
 	@Override
+	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.REQUIRED)
 	public void deleteRecord(@NotNull Integer recordId, @NotNull Integer userId) {
 		log.info("begin to delete record, recordId = {}, userId = {}", recordId, userId);
 		if (!ObjectUtils.allNotNull(recordId, userId)) {
