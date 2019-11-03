@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -110,5 +111,12 @@ public class RecordServiceImpl implements RecordService {
 			logicFileClient.deleteLogicFiles(files, userId);
 		}
 		log.info("end of delete record");
+	}
+
+	@Override
+	public void downloadRecordPictures(@NotNull Integer recordId, @NotNull Integer userId,
+			@NotNull HttpServletResponse response) {
+		// TODO Auto-generated method stub
+
 	}
 }
