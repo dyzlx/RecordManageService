@@ -79,7 +79,7 @@ public class RecordServiceImpl implements RecordService {
 		log.info("record {} has saved", record);
 		if (Objects.nonNull(pictures) && pictures.length != 0) {
 			log.info("record pictures count is {}, begin to save pictures", pictures.length);
-			List<Integer> pictureIds = logicFileClient.uploadFiles(pictures, false, userId);
+			List<Integer> pictureIds = logicFileClient.uploadFiles(pictures, userId);
 			log.info("pictures have saved, picture ids = {}", pictureIds);
 			for (Integer id : pictureIds) {
 				RecordFile recordFile = RecordFile.builder().fileId(id).recordId(record.getId()).build();
