@@ -7,6 +7,10 @@ logging:
 spring:
   application:
     name: recordservice
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
 eureka:
   instance:
     # 使用服务的IP而不是服务器名称，确保在容器环境下正常

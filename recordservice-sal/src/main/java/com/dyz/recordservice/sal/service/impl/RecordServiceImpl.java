@@ -104,11 +104,13 @@ public class RecordServiceImpl implements RecordService {
 		}
 		recordRepository.delete(record);
 		log.info("record object is deleted, {}", record);
-		List<Integer> files = recordFileRepository.queryByRecordId(recordId).stream().map(y -> y.getFileId())
-				.collect(Collectors.toList());
+		List<RecordFile> recordFiles = recordFileRepository.queryByRecordId(recordId);
+		List<Integer> files = recordFiles.stream().map(y -> y.getFileId()).collect(Collectors.toList());
 		log.info("delete record files, fileIds = {}", files);
 		if (CollectionUtils.isNotEmpty(files)) {
 			logicFileClient.deleteLogicFiles(files, userId);
+			log.info("delete relation of record and file");
+			recordFileRepository.deleteAll(recordFiles);
 		}
 		log.info("end of delete record");
 	}
