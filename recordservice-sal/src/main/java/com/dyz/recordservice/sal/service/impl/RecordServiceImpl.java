@@ -1,5 +1,8 @@
 package com.dyz.recordservice.sal.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -9,12 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.dyz.filxeservice.client.LogicFileClient;
 import com.dyz.recordservice.common.execption.IllegalParamException;
@@ -79,14 +87,14 @@ public class RecordServiceImpl implements RecordService {
 		log.info("record {} has saved", record);
 		if (Objects.nonNull(pictures) && pictures.length != 0) {
 			log.info("record pictures count is {}, begin to save pictures", pictures.length);
-			List<Integer> pictureIds = logicFileClient.uploadFiles(pictures, userId);
+			List<Integer> pictureIds = logicFileClient.uploadFiles(transferMultipartFiles(pictures), userId).getContent();
 			log.info("pictures have saved, picture ids = {}", pictureIds);
 			for (Integer id : pictureIds) {
 				RecordFile recordFile = RecordFile.builder().fileId(id).recordId(record.getId()).build();
 				recordFileRepository.save(recordFile);
 			}
 		}
-	    log.info("end of create record");
+		log.info("end of create record");
 		return record.getId();
 	}
 
@@ -120,5 +128,35 @@ public class RecordServiceImpl implements RecordService {
 			@NotNull HttpServletResponse response) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * transfer MultipartFile
+	 * @param files
+	 * @return
+	 */
+	private MultipartFile[] transferMultipartFiles(MultipartFile[] files) {
+		log.info("begin to transfer multipart files, count = {}", files.length);
+		if (Objects.isNull(files)) {
+			return null;
+		}
+		MultipartFile[] resultFiles = new MultipartFile[files.length];
+		int fileIndex = 0;
+		for (MultipartFile file : files) {
+			DiskFileItem fileItem = (DiskFileItem) new DiskFileItemFactory().createItem("file", MediaType.ALL_VALUE,
+					true, file.getOriginalFilename());
+			InputStream input = null;
+			try {
+				input = file.getInputStream();
+				OutputStream os = fileItem.getOutputStream();
+				IOUtils.copy(input, os);
+				MultipartFile result = new CommonsMultipartFile(fileItem);
+				resultFiles[fileIndex++] = result;
+			} catch (IOException e) {
+				log.error("transfer multipart file fail!", e);
+			}
+		}
+		log.info("end of transfer multipart file");
+		return resultFiles;
 	}
 }

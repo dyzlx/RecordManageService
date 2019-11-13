@@ -19,7 +19,7 @@ import com.dyz.recordservice.sal.bo.RecordQueryBo;
 import com.dyz.recordservice.sal.service.RecordService;
 
 @RestController
-@RequestMapping(value = "record")
+@RequestMapping(value = "records")
 public class RecordController {
 
 	@Autowired
