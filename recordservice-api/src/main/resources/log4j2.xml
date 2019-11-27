@@ -7,10 +7,10 @@
 	</properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n" />
-			<!-- <PatternLayout
+			<!-- <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n" /> -->
+			<PatternLayout
 				pattern="[%style{%d}{dark,green}][%highlight{%p}][%style{%t}{dark,blue}][%style{%C}{dark,red}]: %msg%n%style{%throwable}{red}"
-				disableAnsi="false" noConsoleNoAnsi="false" /> -->
+				disableAnsi="false" noConsoleNoAnsi="false" />
 		</Console>
 		<RollingRandomAccessFile name="RollingRandomAccessFile"
 			fileName="${LOG_HOME}/${FILE_NAME}.log"

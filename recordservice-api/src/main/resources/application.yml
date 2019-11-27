@@ -4,6 +4,8 @@ server:
     context-path: /recordservice
 logging:
   config: classpath:log4j2.xml
+  level:
+    com.dyz.filxeservice.client.LogicFileClient: DEBUG
 spring:
   application:
     name: recordservice

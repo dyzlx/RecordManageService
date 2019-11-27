@@ -41,8 +41,8 @@ public class RecordController {
 			consumes = { "multipart/form-data" })
 	public ResponseEntity<Result> createRecord(
 			@RequestParam MultipartFile[] pictures,
-			@RequestParam(required = false) String title, 
-			@RequestParam(required = false) String content,
+			@RequestParam String title,
+			@RequestParam String content,
 			@RequestHeader Integer userId) {
 		Integer id = recordService.createRecord(pictures, RecordModelTranslator.toBo(title, content), userId);
 		return ResponseEntity.status(HttpStatus.OK)
