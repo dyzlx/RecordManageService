@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "record_file")
-public class RecordFile {
+public class RFile {
 
 	@Id
 	@Column(name = "id")

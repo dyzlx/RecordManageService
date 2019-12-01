@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.dyz.recordservice.domain.entity.Record;
-import com.dyz.recordservice.domain.entity.RecordFile;
+import com.dyz.recordservice.domain.entity.RFile;
 
 @Repository
-public interface RecordFileRepository extends JpaRepository<RecordFile, Integer> {
+public interface RecordFileRepository extends JpaRepository<RFile, Integer> {
 
-	List<RecordFile> queryByRecordId(Integer recordId);
+	List<RFile> queryByRecordId(Integer recordId);
 
-	List<RecordFile> queryByFileId(Integer fileId);
+	RFile queryByFileId(Integer fileId);
 
 	Record queryById(Integer id);
 }

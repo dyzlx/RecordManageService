@@ -28,7 +28,7 @@ import com.dyz.filxeservice.client.LogicFileClient;
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
 import com.dyz.recordservice.domain.entity.Record;
-import com.dyz.recordservice.domain.entity.RecordFile;
+import com.dyz.recordservice.domain.entity.RFile;
 import com.dyz.recordservice.domain.repository.RecordFileRepository;
 import com.dyz.recordservice.domain.repository.RecordRepository;
 import com.dyz.recordservice.sal.bo.RecordCreateBo;
@@ -60,7 +60,7 @@ public class RecordServiceImpl implements RecordService {
 			throw new IllegalParamException(0, "param is null");
 		}
 		List<Record> records = recordRepository.queryRecordInfo(queryBo.getTitle(), queryBo.getUserId(),
-				queryBo.getFromDate(), queryBo.getToDate());
+				queryBo.getFromTime(), queryBo.getToTime());
 		log.info("query records result = {}", records);
 		List<RecordInfoBo> results = RecordModelTranslator.toBoList(records);
 		if (CollectionUtils.isNotEmpty(results)) {
@@ -90,7 +90,7 @@ public class RecordServiceImpl implements RecordService {
 			List<Integer> pictureIds = logicFileClient.uploadFiles(transferMultipartFiles(pictures), userId).getContent();
 			log.info("pictures have saved, picture ids = {}", pictureIds);
 			for (Integer id : pictureIds) {
-				RecordFile recordFile = RecordFile.builder().fileId(id).recordId(record.getId()).build();
+				RFile recordFile = RFile.builder().fileId(id).recordId(record.getId()).build();
 				recordFileRepository.save(recordFile);
 			}
 		}
@@ -112,7 +112,7 @@ public class RecordServiceImpl implements RecordService {
 		}
 		recordRepository.delete(record);
 		log.info("record object is deleted, {}", record);
-		List<RecordFile> recordFiles = recordFileRepository.queryByRecordId(recordId);
+		List<RFile> recordFiles = recordFileRepository.queryByRecordId(recordId);
 		List<Integer> files = recordFiles.stream().map(y -> y.getFileId()).collect(Collectors.toList());
 		log.info("delete record files, fileIds = {}", files);
 		if (CollectionUtils.isNotEmpty(files)) {

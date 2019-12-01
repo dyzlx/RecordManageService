@@ -20,29 +20,29 @@ public class RecordQueryBo {
 	
 	private Integer userId;
 	
-	private Date fromDate;
+	private Date fromTime;
 	
-	private Date toDate;
+	private Date toTime;
 	
-	public Date getFromDate() {
-		if (Objects.isNull(fromDate)) {
+	public Date getFromTime() {
+		if (Objects.isNull(fromTime)) {
 			try {
 				return DateUtils.parseDate(ServiceConstant.DEFAULT_FROM_DATE, ServiceConstant.DATE_FORMAT_SHORT);
 			} catch (ParseException e) {
 				throw new IllegalParamException(0, "Illega param fromTime");
 			}
 		}
-		return fromDate;
+		return fromTime;
 	}
 
-	public Date getToDate() {
-		if (Objects.isNull(toDate)) {
+	public Date getToTime() {
+		if (Objects.isNull(toTime)) {
 			try {
 				return DateUtils.parseDate(ServiceConstant.DEFAULT_TO_DATE, ServiceConstant.DATE_FORMAT_SHORT);
 			} catch (ParseException e) {
 				throw new IllegalParamException(0, "Illega param toTime");
 			}
 		}
-		return toDate;
+		return toTime;
 	}
 }
