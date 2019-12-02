@@ -6,6 +6,7 @@ logging:
   config: classpath:log4j2.xml
   level:
     com.dyz.filxeservice.client.LogicFileClient: DEBUG
+    com.dyz.commentservice.client.CommentClient: DEBUG
 spring:
   application:
     name: recordservice

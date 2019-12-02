@@ -1,16 +1,18 @@
 package com.dyz.recordservice.sal.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
+import com.dyz.recordservice.common.execption.IllegalParamException;
+import com.dyz.recordservice.common.execption.NoDataException;
+import com.dyz.recordservice.domain.entity.RFile;
+import com.dyz.recordservice.domain.entity.Record;
+import com.dyz.recordservice.domain.repository.RecordFileRepository;
+import com.dyz.recordservice.domain.repository.RecordRepository;
+import com.dyz.recordservice.sal.access.LogicFileAccess;
+import com.dyz.recordservice.sal.bo.RecordCreateBo;
+import com.dyz.recordservice.sal.bo.RecordInfoBo;
+import com.dyz.recordservice.sal.bo.RecordQueryBo;
+import com.dyz.recordservice.sal.service.RecordService;
+import com.dyz.recordservice.sal.translation.RecordModelTranslator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -24,20 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.dyz.filxeservice.client.LogicFileClient;
-import com.dyz.recordservice.common.execption.IllegalParamException;
-import com.dyz.recordservice.common.execption.NoDataException;
-import com.dyz.recordservice.domain.entity.Record;
-import com.dyz.recordservice.domain.entity.RFile;
-import com.dyz.recordservice.domain.repository.RecordFileRepository;
-import com.dyz.recordservice.domain.repository.RecordRepository;
-import com.dyz.recordservice.sal.bo.RecordCreateBo;
-import com.dyz.recordservice.sal.bo.RecordInfoBo;
-import com.dyz.recordservice.sal.bo.RecordQueryBo;
-import com.dyz.recordservice.sal.service.RecordService;
-import com.dyz.recordservice.sal.translation.RecordModelTranslator;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,7 +47,7 @@ public class RecordServiceImpl implements RecordService {
 	private RecordFileRepository recordFileRepository;
 
 	@Autowired
-	private LogicFileClient logicFileClient;
+	private LogicFileAccess logicFileAccess;
 
 	@Override
 	@Transactional(rollbackFor = { Exception.class }, propagation = Propagation.REQUIRED)
@@ -87,7 +84,7 @@ public class RecordServiceImpl implements RecordService {
 		log.info("record {} has saved", record);
 		if (Objects.nonNull(pictures) && pictures.length != 0) {
 			log.info("record pictures count is {}, begin to save pictures", pictures.length);
-			List<Integer> pictureIds = logicFileClient.uploadFiles(transferMultipartFiles(pictures), userId).getContent();
+			List<Integer> pictureIds = logicFileAccess.uploadFiles(transferMultipartFiles(pictures), userId);
 			log.info("pictures have saved, picture ids = {}", pictureIds);
 			for (Integer id : pictureIds) {
 				RFile recordFile = RFile.builder().fileId(id).recordId(record.getId()).build();
@@ -116,7 +113,7 @@ public class RecordServiceImpl implements RecordService {
 		List<Integer> files = recordFiles.stream().map(y -> y.getFileId()).collect(Collectors.toList());
 		log.info("delete record files, fileIds = {}", files);
 		if (CollectionUtils.isNotEmpty(files)) {
-			logicFileClient.deleteLogicFiles(files, userId);
+			logicFileAccess.deleteLogicFiles(files, userId);
 			log.info("delete relation of record and file");
 			recordFileRepository.deleteAll(recordFiles);
 		}
