@@ -7,11 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RecordCommentRepository extends JpaRepository<RComment, Integer> {
+public interface RCommentRepository extends JpaRepository<RComment, Integer> {
 
     List<RComment> queryByRecordId(Integer recordId);
 
     RComment queryByCommentId(Integer commentId);
-
-    RComment queryById(Integer id);
 }

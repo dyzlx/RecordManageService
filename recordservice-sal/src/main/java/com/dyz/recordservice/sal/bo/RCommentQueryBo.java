@@ -12,11 +12,9 @@ import java.util.Objects;
 
 @Data
 @Builder
-public class RecordCommentQueryBo {
+public class RCommentQueryBo {
 
     private Integer recordId;
-
-    private Integer commentId;
 
     private Integer publisherId;
 

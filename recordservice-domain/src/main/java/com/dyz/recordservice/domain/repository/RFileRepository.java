@@ -9,7 +9,7 @@ import com.dyz.recordservice.domain.entity.Record;
 import com.dyz.recordservice.domain.entity.RFile;
 
 @Repository
-public interface RecordFileRepository extends JpaRepository<RFile, Integer> {
+public interface RFileRepository extends JpaRepository<RFile, Integer> {
 
 	List<RFile> queryByRecordId(Integer recordId);
 

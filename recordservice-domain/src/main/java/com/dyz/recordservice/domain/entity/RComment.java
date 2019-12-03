@@ -13,27 +13,37 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
 @Builder
 @ToString
-@EqualsAndHashCode(of = { "id", "recordId", "commentId" })
+@EqualsAndHashCode(of = {"recordId", "commentId"})
 @NoArgsConstructor
 @AllArgsConstructor
 
 @Entity
 @Table(name = "record_comment")
+@IdClass(RCommentKey.class)
 public class RComment {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
     @Column(name = "record_id", nullable = false)
     private int recordId;
 
+    @Id
     @Column(name = "comment_id", nullable = false)
+    private int commentId;
+
+    @Column(name = "parent_id", nullable = false)
+    private int parentId;
+}
+
+class RCommentKey implements Serializable {
+
+    private int recordId;
+
     private int commentId;
 }

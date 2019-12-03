@@ -21,9 +21,9 @@ public class RecordModelTranslator {
 		RecordQueryBo queryBo = null;
 		try {
 			queryBo = RecordQueryBo.builder().title(title).userId(userId)
-					.fromDate(Objects.isNull(fromDate) ? null
+					.fromTime(Objects.isNull(fromDate) ? null
 							: DateUtils.parseDate(fromDate, ServiceConstant.DATE_FORMAT_SHORT))
-					.toDate(Objects.isNull(toDate) ? null
+					.toTime(Objects.isNull(toDate) ? null
 							: DateUtils.parseDate(toDate, ServiceConstant.DATE_FORMAT_SHORT))
 					.build();
 		} catch (ParseException e) {

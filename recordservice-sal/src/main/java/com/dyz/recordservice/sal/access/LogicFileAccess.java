@@ -16,11 +16,13 @@ public class LogicFileAccess {
     private LogicFileClient logicFileClient;
 
     public List<Integer> uploadFiles(MultipartFile[] files, Integer userId) {
+        log.info("trigger remote service to upload file");
         List<Integer> pictureIds = logicFileClient.uploadFiles(files, userId).getContent();
         return pictureIds;
     }
 
     public void deleteLogicFiles(List<Integer> fileIds, Integer userId) {
+        log.info("trigger remote service to delete files");
         logicFileClient.deleteLogicFiles(fileIds, userId);
     }
 }

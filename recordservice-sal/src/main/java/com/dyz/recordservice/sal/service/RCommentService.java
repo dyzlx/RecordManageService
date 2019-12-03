@@ -1,29 +1,28 @@
 package com.dyz.recordservice.sal.service;
 
 
-import com.dyz.recordservice.sal.bo.RecordCommentInfoBo;
-import com.dyz.recordservice.sal.bo.RecordCommentQueryBo;
+import com.dyz.recordservice.sal.bo.RCommentCreateBo;
+import com.dyz.recordservice.sal.bo.RCommentInfoBo;
+import com.dyz.recordservice.sal.bo.RCommentQueryBo;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public interface RecordCommentService {
+public interface RCommentService {
 
     /**
      *
      * @param queryBo
      * @return
      */
-    List<RecordCommentInfoBo> queryRecordCommentInfo(@NotNull RecordCommentQueryBo queryBo);
+    List<RCommentInfoBo> queryRecordCommentInfo(@NotNull RCommentQueryBo queryBo);
 
     /**
      *
-     * @param content
-     * @param recordId
      * @param userId
      * @return
      */
-    Integer createRecordComment(@NotNull String content, @NotNull Integer recordId, @NotNull Integer userId);
+    Integer createRecordComment(@NotNull RCommentCreateBo createBo, @NotNull Integer userId);
 
     /**
      *

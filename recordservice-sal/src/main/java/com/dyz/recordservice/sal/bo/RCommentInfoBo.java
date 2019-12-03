@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class RecordCommentInfoBo {
+public class RCommentInfoBo {
 
     private Integer recordId;
 
@@ -20,7 +20,7 @@ public class RecordCommentInfoBo {
 
     private Date createTime;
 
-    private Integer targetId;
+    private Integer parentId;
 
     private List<Integer> directChildCommentIds;
 }

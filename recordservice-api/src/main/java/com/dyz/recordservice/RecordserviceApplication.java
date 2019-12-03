@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "com.dyz.filxeservice.client")
+@EnableFeignClients(basePackages = {"com.dyz.filxeservice.client", "com.dyz.commentservice.client"})
 @EnableTransactionManagement
 public class RecordserviceApplication {
     public static void main(String[] args) {
