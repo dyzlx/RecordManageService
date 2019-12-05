@@ -20,6 +20,7 @@ public class CommentAccess {
     public List<CommentInfo> queryComments(CommentQueryInfo queryInfo) {
         log.info("trigger remote service to query comments");
         List<CommentInfo> comments = commentClient.queryComment(queryInfo).getContent();
+        log.info("get data from remote service: {}", comments);
         return comments;
     }
 
