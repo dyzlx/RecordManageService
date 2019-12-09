@@ -29,7 +29,7 @@ public interface RCommentService {
      * @param commentId
      * @param userId
      */
-    void deleteRecordComment(@NotNull Integer commentId, @NotNull Integer userId);
+    void deleteRecordComment(@NotNull Integer recordId, @NotNull Integer commentId, @NotNull Integer userId);
 
     /**
      *
