@@ -59,6 +59,9 @@ public class RCommentServiceImpl implements RCommentService {
                 parentComment.getDirectChildCommentIds().add(x.getCommentId());
             }
         });
+        log.info("update local data");
+        // sync method to update local comment data if necessary
+        // TODO
         log.info("end of query comment info, result = {}", commentInfos);
         return null;
     }

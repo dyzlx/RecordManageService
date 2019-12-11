@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.dyz.recordservice.api.model.CommonPostResponse;
 import com.dyz.recordservice.api.model.RecordInfoVo;
 import com.dyz.recordservice.api.model.Result;
 import com.dyz.recordservice.api.translation.RecordModelTranslator;
@@ -28,10 +27,10 @@ public class RecordController {
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
 	public ResponseEntity<Result> queryRecord(
 			@RequestParam(required = false) String title,
-			@RequestParam(required = false) Integer userId, 
-			@RequestParam(required = false) String fromDate,
-			@RequestParam(required = false) String toDate) {
-		RecordQueryBo queryBo = RecordModelTranslator.toBo(title, userId, fromDate, toDate);
+			@RequestParam(required = false) Integer userId,
+			@RequestParam(required = false) String fromTime,
+			@RequestParam(required = false) String toTime) {
+		RecordQueryBo queryBo = RecordModelTranslator.toBo(title, userId, fromTime, toTime);
 		List<RecordInfoVo> result = RecordModelTranslator.toVoList(recordService.queryRecordInfo(queryBo));
 		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(result).build());
 	}
@@ -45,10 +44,9 @@ public class RecordController {
 			@RequestParam String content,
 			@RequestHeader Integer userId) {
 		Integer id = recordService.createRecord(pictures, RecordModelTranslator.toBo(title, content), userId);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(Result.builder().content(new CommonPostResponse<Integer>(id)).build());
+		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
 	}
-	
+
 	@RequestMapping(value = "{recordId}", method = RequestMethod.DELETE,
 			produces = { "application/json","application/xml" })
 	public ResponseEntity<Result> deleteRecord(@PathVariable Integer recordId, @RequestHeader Integer userId) {

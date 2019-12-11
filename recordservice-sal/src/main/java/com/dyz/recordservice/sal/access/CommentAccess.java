@@ -6,7 +6,6 @@ import com.dyz.commentservice.client.model.CommentInfo;
 import com.dyz.commentservice.client.model.CommentQueryInfo;
 import com.dyz.recordservice.common.constant.ServiceConstant;
 import com.dyz.recordservice.common.execption.IllegalParamException;
-import com.dyz.recordservice.common.execption.RemoteServiceException;
 import com.dyz.recordservice.common.util.DateHandler;
 import com.dyz.recordservice.sal.bo.RCommentCreateBo;
 import com.dyz.recordservice.sal.bo.RCommentInfoBo;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -27,9 +27,16 @@ public class CommentAccess {
     @Autowired
     private CommentClient commentClient;
 
+    public List<RCommentInfoBo> queryCommentsByIds(List<Integer> commentId, Integer userId){
+        log.info("trigger remote service to query comments by ids = {}", commentId);
+        List<CommentInfo> comments = commentClient.queryCommentByIds(commentId, userId).getContent();
+        log.info("get data from remote service: {}", comments);
+        List<RCommentInfoBo> result = toBo(comments);
+        return result;
+    }
+
     public List<RCommentInfoBo> queryComments(RCommentQueryBo queryBo) {
         log.info("trigger remote service to query comments");
-        List<RCommentInfoBo> result = new ArrayList<>();
         CommentQueryInfo clientQueryInfo = CommentQueryInfo.builder()
                 .targetResourceId(queryBo.getRecordId())
                 .type("record")
@@ -39,20 +46,7 @@ public class CommentAccess {
                 .build();
         List<CommentInfo> comments = commentClient.queryComment(clientQueryInfo).getContent();
         log.info("get data from remote service: {}", comments);
-        comments.forEach(x -> {
-            try {
-                RCommentInfoBo rCommentInfoBo = RCommentInfoBo.builder()
-                        .recordId(x.getTargetResourceId())
-                        .commentId(x.getCommentId())
-                        .content(x.getContent())
-                        .createTime(DateUtils.parseDate(x.getCreateTime(), ServiceConstant.DATE_FORMAT_SHORT))
-                        .publisherId(x.getPublisherId())
-                        .parentId(x.getParentId()).build();
-                result.add(rCommentInfoBo);
-            } catch (ParseException e) {
-                throw new IllegalParamException(0, "illegal param");
-            }
-        });
+        List<RCommentInfoBo> result = toBo(comments);
         return result;
     }
 
@@ -70,5 +64,27 @@ public class CommentAccess {
     public void deleteComments(Integer commentId, Integer userId) {
         log.info("trigger remote service to delete comment");
         commentClient.deleteComment(commentId, userId);
+    }
+
+    private List<RCommentInfoBo> toBo(List<CommentInfo> comments){
+        if(Objects.isNull(comments)){
+            return null;
+        }
+        List<RCommentInfoBo> result = new ArrayList<>();
+        comments.forEach(x -> {
+            try {
+                RCommentInfoBo rCommentInfoBo = RCommentInfoBo.builder()
+                        .recordId(x.getTargetResourceId())
+                        .commentId(x.getCommentId())
+                        .content(x.getContent())
+                        .createTime(DateUtils.parseDate(x.getCreateTime(), ServiceConstant.DATE_FORMAT_SHORT))
+                        .publisherId(x.getPublisherId())
+                        .parentId(x.getParentId()).build();
+                result.add(rCommentInfoBo);
+            } catch (ParseException e) {
+                throw new IllegalParamException(0, "illegal param");
+            }
+        });
+        return result;
     }
 }

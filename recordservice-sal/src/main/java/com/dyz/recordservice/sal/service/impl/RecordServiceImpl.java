@@ -123,8 +123,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public void downloadRecordPictures(@NotNull Integer recordId, @NotNull Integer userId,
                                        @NotNull HttpServletResponse response) {
-        // TODO Auto-generated method stub
-
+        // TODO
     }
 
     /**

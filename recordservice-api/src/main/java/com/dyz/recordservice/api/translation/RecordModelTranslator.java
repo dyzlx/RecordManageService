@@ -17,14 +17,14 @@ import com.dyz.recordservice.sal.bo.RecordQueryBo;
 
 public class RecordModelTranslator {
 
-	public static RecordQueryBo toBo(String title, Integer userId, String fromDate, String toDate) {
+	public static RecordQueryBo toBo(String title, Integer userId, String fromTime, String toTime) {
 		RecordQueryBo queryBo = null;
 		try {
 			queryBo = RecordQueryBo.builder().title(title).userId(userId)
-					.fromTime(Objects.isNull(fromDate) ? null
-							: DateUtils.parseDate(fromDate, ServiceConstant.DATE_FORMAT_SHORT))
-					.toTime(Objects.isNull(toDate) ? null
-							: DateUtils.parseDate(toDate, ServiceConstant.DATE_FORMAT_SHORT))
+					.fromTime(Objects.isNull(fromTime) ? null
+							: DateUtils.parseDate(fromTime, ServiceConstant.DATE_FORMAT_SHORT))
+					.toTime(Objects.isNull(toTime) ? null
+							: DateUtils.parseDate(toTime, ServiceConstant.DATE_FORMAT_SHORT))
 					.build();
 		} catch (ParseException e) {
 			throw new IllegalParamException(0, "illegal param");
