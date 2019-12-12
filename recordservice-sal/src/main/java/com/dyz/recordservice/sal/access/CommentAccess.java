@@ -41,8 +41,8 @@ public class CommentAccess {
                 .targetResourceId(queryBo.getRecordId())
                 .type("record")
                 .publisherId(queryBo.getPublisherId())
-                .fromTime(DateHandler.getDateString(queryBo.getFromTime()))
-                .toTime(DateHandler.getDateString(queryBo.getToTime()))
+                .fromTime(DateHandler.getShortDateString(queryBo.getFromTime()))
+                .toTime(DateHandler.getShortDateString(queryBo.getToTime()))
                 .build();
         List<CommentInfo> comments = commentClient.queryComment(clientQueryInfo).getContent();
         log.info("get data from remote service: {}", comments);
@@ -77,9 +77,11 @@ public class CommentAccess {
                         .recordId(x.getTargetResourceId())
                         .commentId(x.getCommentId())
                         .content(x.getContent())
-                        .createTime(DateUtils.parseDate(x.getCreateTime(), ServiceConstant.DATE_FORMAT_SHORT))
+                        .createTime(DateUtils.parseDate(x.getCreateTime(), ServiceConstant.DATE_FORMAT))
                         .publisherId(x.getPublisherId())
-                        .parentId(x.getParentId()).build();
+                        .parentId(x.getParentId())
+                        .directChildCommentIds(new ArrayList<>())
+                        .build();
                 result.add(rCommentInfoBo);
             } catch (ParseException e) {
                 throw new IllegalParamException(0, "illegal param");

@@ -63,7 +63,7 @@ public class RCommentServiceImpl implements RCommentService {
         // sync method to update local comment data if necessary
         // TODO
         log.info("end of query comment info, result = {}", commentInfos);
-        return null;
+        return commentInfos;
     }
 
     @Override

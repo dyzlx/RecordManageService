@@ -58,9 +58,9 @@ public class RCommentController {
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().build());
     }
 
-    @RequestMapping(value = "count", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
+    @RequestMapping(value = "count/{recordId}", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
     public ResponseEntity<Result> queryRecordCommentCount(
-            @RequestParam(required = false) Integer recordId,
+            @PathVariable Integer recordId,
             @RequestHeader Integer userId) {
         Integer count = rCommentService.getRecordCommentCount(recordId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(count).build());
