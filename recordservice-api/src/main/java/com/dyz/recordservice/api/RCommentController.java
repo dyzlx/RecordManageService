@@ -48,19 +48,19 @@ public class RCommentController {
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
     }
 
-    @RequestMapping(value = "record/{recordId}/comment/{commentId}", method = RequestMethod.DELETE,
+    @RequestMapping(value = "", method = RequestMethod.DELETE,
             produces = {"application/json", "application/xml"})
     public ResponseEntity<Result> deleteRecordComment(
-            @PathVariable Integer recordId,
-            @PathVariable Integer commentId,
+            @RequestParam Integer recordId,
+            @RequestParam Integer commentId,
             @RequestHeader Integer userId) {
         rCommentService.deleteRecordComment(recordId, commentId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().build());
     }
 
-    @RequestMapping(value = "count/{recordId}", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
+    @RequestMapping(value = "count", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
     public ResponseEntity<Result> queryRecordCommentCount(
-            @PathVariable Integer recordId,
+            @RequestParam Integer recordId,
             @RequestHeader Integer userId) {
         Integer count = rCommentService.getRecordCommentCount(recordId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(count).build());
