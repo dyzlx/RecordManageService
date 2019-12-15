@@ -19,6 +19,8 @@ public class RecordInfoBo {
 	private Integer userId;
 	
 	private Date createTime;
+
+    private Integer commentsCount;
 	
 	private List<Integer> fileIds;
 }

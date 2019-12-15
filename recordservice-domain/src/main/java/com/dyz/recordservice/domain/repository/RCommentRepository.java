@@ -14,4 +14,6 @@ public interface RCommentRepository extends JpaRepository<RComment, Integer> {
     RComment queryByCommentId(Integer commentId);
 
     RComment queryByRecordIdAndCommentId(Integer recordId, Integer commentId);
+
+    int countByRecordId(Integer recordId);
 }

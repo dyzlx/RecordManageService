@@ -4,6 +4,7 @@ import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
 import com.dyz.recordservice.domain.entity.RFile;
 import com.dyz.recordservice.domain.entity.Record;
+import com.dyz.recordservice.domain.repository.RCommentRepository;
 import com.dyz.recordservice.domain.repository.RFileRepository;
 import com.dyz.recordservice.domain.repository.RecordRepository;
 import com.dyz.recordservice.sal.access.LogicFileAccess;
@@ -47,6 +48,9 @@ public class RecordServiceImpl implements RecordService {
     private RFileRepository rFileRepository;
 
     @Autowired
+    private RCommentRepository rCommentRepository;
+
+    @Autowired
     private LogicFileAccess logicFileAccess;
 
     @Override
@@ -65,6 +69,9 @@ public class RecordServiceImpl implements RecordService {
                 log.info("query file ids by record id = {}", x.getRecordId());
                 x.setFileIds(rFileRepository.queryByRecordId(x.getRecordId()).stream().map(y -> y.getFileId())
                         .collect(Collectors.toList()));
+                log.info("query record comments count bu record id = {}", x.getRecordId());
+                int commentCount = rCommentRepository.countByRecordId(x.getRecordId());
+                x.setCommentsCount(commentCount);
             });
         }
         log.info("end of query records, result = {}", results);

@@ -17,6 +17,8 @@ public class RecordInfoVo {
 	private Integer userId;
 	
 	private String createTime;
+
+    private Integer commentsCount;
 	
 	private List<Integer> fileIds;
 }

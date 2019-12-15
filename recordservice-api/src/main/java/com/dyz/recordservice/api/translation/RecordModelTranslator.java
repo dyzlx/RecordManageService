@@ -42,7 +42,8 @@ public class RecordModelTranslator {
 		}
 		return RecordInfoVo.builder().title(bo.getTitle()).content(bo.getContent()).userId(bo.getUserId())
 				.recordId(bo.getRecordId()).createTime(DateHandler.getDateString(bo.getCreateTime()))
-				.fileIds(bo.getFileIds()).build();
+				.fileIds(bo.getFileIds())
+                .commentsCount(bo.getCommentsCount()).build();
 	}
 
 	public static List<RecordInfoVo> toVoList(List<RecordInfoBo> boList) {

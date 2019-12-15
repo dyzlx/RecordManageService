@@ -107,8 +107,7 @@ public class RCommentServiceImpl implements RCommentService {
         if(!ObjectUtils.allNotNull(recordId, userId)){
             throw new IllegalParamException(0, "param is null");
         }
-        List<RComment> rComments = rCommentRepository.queryByRecordId(recordId);
-        int count = rComments.size();
+        int count = rCommentRepository.countByRecordId(recordId);
         log.info("end of query record comment count = {}", count);
         return count;
     }
