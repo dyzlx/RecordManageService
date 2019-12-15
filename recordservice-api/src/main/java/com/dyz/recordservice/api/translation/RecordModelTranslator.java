@@ -17,10 +17,13 @@ import com.dyz.recordservice.sal.bo.RecordQueryBo;
 
 public class RecordModelTranslator {
 
-	public static RecordQueryBo toBo(String title, Integer userId, String fromTime, String toTime) {
+	public static RecordQueryBo toBo(Integer recordId, String title, Integer userId, String fromTime, String toTime) {
 		RecordQueryBo queryBo = null;
 		try {
-			queryBo = RecordQueryBo.builder().title(title).userId(userId)
+			queryBo = RecordQueryBo.builder()
+                    .title(title)
+                    .userId(userId)
+                    .recordId(recordId)
 					.fromTime(Objects.isNull(fromTime) ? null
 							: DateUtils.parseDate(fromTime, ServiceConstant.DATE_FORMAT_SHORT))
 					.toTime(Objects.isNull(toTime) ? null

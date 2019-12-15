@@ -16,6 +16,8 @@ import lombok.Data;
 @Builder
 public class RecordQueryBo {
 
+    private Integer recordId;
+
 	private String title;
 	
 	private Integer userId;

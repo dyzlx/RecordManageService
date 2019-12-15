@@ -26,11 +26,12 @@ public class RecordController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
 	public ResponseEntity<Result> queryRecord(
+            @RequestParam(required = false) Integer recordId,
 			@RequestParam(required = false) String title,
 			@RequestParam(required = false) Integer userId,
 			@RequestParam(required = false) String fromTime,
 			@RequestParam(required = false) String toTime) {
-		RecordQueryBo queryBo = RecordModelTranslator.toBo(title, userId, fromTime, toTime);
+		RecordQueryBo queryBo = RecordModelTranslator.toBo(recordId, title, userId, fromTime, toTime);
 		List<RecordInfoVo> result = RecordModelTranslator.toVoList(recordService.queryRecordInfo(queryBo));
 		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(result).build());
 	}
