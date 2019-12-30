@@ -60,7 +60,7 @@ public class RecordServiceImpl implements RecordService {
         if (Objects.isNull(queryBo)) {
             throw new IllegalParamException(0, "param is null");
         }
-        List<Record> records = recordRepository.queryRecordInfo(queryBo.getRecordId(), queryBo.getTitle(), queryBo.getUserId(),
+        List<Record> records = recordRepository.queryRecordsInfo(queryBo.getRecordId(), queryBo.getTitle(), queryBo.getUserId(),
                 queryBo.getFromTime(), queryBo.getToTime());
         log.info("query records result = {}", records);
         List<RecordInfoBo> results = RecordModelTranslator.toBoList(records);

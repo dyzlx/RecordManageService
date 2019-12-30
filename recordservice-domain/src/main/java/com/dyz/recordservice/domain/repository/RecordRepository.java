@@ -19,5 +19,5 @@ public interface RecordRepository extends JpaRepository<Record, Integer> {
             + " and if(?2 is NULL,1=1,title like %?2%)"
 			+ " and if(?3 is NULL,1=1,user_id=?3)"
 			+ " and create_time between ?4 and ?5", nativeQuery = true)
-	List<Record> queryRecordInfo(Integer recordId, String title, Integer userId, Date fromDate, Date toDate);
+	List<Record> queryRecordsInfo(Integer recordId, String title, Integer userId, Date fromDate, Date toDate);
 }
