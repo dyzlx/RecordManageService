@@ -20,6 +20,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
@@ -67,6 +69,7 @@ public class RCommentServiceImpl implements RCommentService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public Integer createRecordComment(@NotNull RCommentCreateBo createBo, @NotNull Integer userId) {
         log.info("begin to create record comment, createBo = {}, userId = {}", createBo, userId);
         if(!ObjectUtils.allNotNull(createBo.getContent(), createBo.getParentId(), createBo.getRecordId())){
@@ -85,6 +88,7 @@ public class RCommentServiceImpl implements RCommentService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public void deleteRecordComment(@NotNull Integer recordId, @NotNull Integer commentId, @NotNull Integer userId) {
         log.info("begin to delete record comment, recordId = {}, commentId = {}, userId = {}", recordId, commentId, userId);
         if(!ObjectUtils.allNotNull(recordId, commentId, userId)){
