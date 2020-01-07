@@ -32,12 +32,5 @@ public interface RecordService {
 	 * @param userId
 	 */
 	void deleteRecord(@NotNull Integer recordId, @NotNull Integer userId);
-	
-	/**
-	 * download record pictures by record id
-	 * @param recordId
-	 * @param userId
-	 * @param response
-	 */
-	void downloadRecordPictures(@NotNull Integer recordId, @NotNull Integer userId, @NotNull HttpServletResponse response);
+
 }

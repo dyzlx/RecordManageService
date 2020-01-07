@@ -127,12 +127,6 @@ public class RecordServiceImpl implements RecordService {
         log.info("end of delete record");
     }
 
-    @Override
-    public void downloadRecordPictures(@NotNull Integer recordId, @NotNull Integer userId,
-                                       @NotNull HttpServletResponse response) {
-        // TODO
-    }
-
     /**
      * transfer MultipartFile
      *
