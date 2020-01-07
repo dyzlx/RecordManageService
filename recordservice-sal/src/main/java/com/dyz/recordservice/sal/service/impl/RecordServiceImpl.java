@@ -65,9 +65,9 @@ public class RecordServiceImpl implements RecordService {
         log.info("query records result = {}", records);
         List<RecordInfoBo> results = RecordModelTranslator.toBoList(records);
         if (CollectionUtils.isNotEmpty(results)) {
-            results.stream().forEach(x -> {
+            results.forEach(x -> {
                 log.info("query file ids by record id = {}", x.getRecordId());
-                x.setFileIds(rFileRepository.queryByRecordId(x.getRecordId()).stream().map(y -> y.getFileId())
+                x.setFileIds(rFileRepository.queryByRecordId(x.getRecordId()).stream().map(RFile::getFileId)
                         .collect(Collectors.toList()));
                 log.info("query record comments count bu record id = {}", x.getRecordId());
                 int commentCount = rCommentRepository.countByRecordId(x.getRecordId());
@@ -117,7 +117,7 @@ public class RecordServiceImpl implements RecordService {
         recordRepository.delete(record);
         log.info("record object is deleted, {}", record);
         List<RFile> recordFiles = rFileRepository.queryByRecordId(recordId);
-        List<Integer> files = recordFiles.stream().map(y -> y.getFileId()).collect(Collectors.toList());
+        List<Integer> files = recordFiles.stream().map(RFile::getFileId).collect(Collectors.toList());
         log.info("delete record files, fileIds = {}", files);
         if (CollectionUtils.isNotEmpty(files)) {
             logicFileAccess.deleteLogicFiles(files, userId);
