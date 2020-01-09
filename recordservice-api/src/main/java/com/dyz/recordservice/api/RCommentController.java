@@ -9,6 +9,7 @@ import com.dyz.recordservice.sal.service.RCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -42,7 +43,7 @@ public class RCommentController {
             produces = {"application/json", "application/xml"},
             consumes = {"application/json", "application/xml"})
     public ResponseEntity<Result> createRecordComment(
-            @RequestBody RCommentCreateVo createVo,
+            @Validated @RequestBody RCommentCreateVo createVo,
             @RequestHeader Integer userId) {
         Integer id = rCommentService.createRecordComment(RCommentModelTranslator.toBo(createVo), userId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
