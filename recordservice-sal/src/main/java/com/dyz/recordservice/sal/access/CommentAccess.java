@@ -27,9 +27,9 @@ public class CommentAccess {
     @Autowired
     private CommentClient commentClient;
 
-    public List<RCommentInfoBo> queryCommentsByIds(List<Integer> commentId, Integer userId){
+    public List<RCommentInfoBo> queryCommentsByIds(List<Integer> commentId) {
         log.info("trigger remote service to query comments by ids = {}", commentId);
-        List<CommentInfo> comments = commentClient.queryCommentByIds(commentId, userId).getContent();
+        List<CommentInfo> comments = commentClient.queryCommentByIds(commentId).getContent();
         log.info("get data from remote service: {}", comments);
         List<RCommentInfoBo> result = toBo(comments);
         return result;
@@ -50,24 +50,24 @@ public class CommentAccess {
         return result;
     }
 
-    public Integer createComments(RCommentCreateBo createBo, Integer userId) {
+    public Integer createComments(RCommentCreateBo createBo) {
         log.info("trigger remote serivce to create comment");
         CommentCreateInfo createInfo = CommentCreateInfo.builder()
                 .content(createBo.getContent())
                 .parentId(createBo.getParentId())
                 .targetResourceId(createBo.getRecordId())
                 .type("record").build();
-        Integer commentId = commentClient.createComment(createInfo, userId).getContent();
+        Integer commentId = commentClient.createComment(createInfo).getContent();
         return commentId;
     }
 
-    public void deleteComments(Integer commentId, Integer userId) {
+    public void deleteComments(Integer commentId) {
         log.info("trigger remote service to delete comment");
-        commentClient.deleteComment(commentId, userId);
+        commentClient.deleteComment(commentId);
     }
 
-    private List<RCommentInfoBo> toBo(List<CommentInfo> comments){
-        if(Objects.isNull(comments)){
+    private List<RCommentInfoBo> toBo(List<CommentInfo> comments) {
+        if (Objects.isNull(comments)) {
             return null;
         }
         List<RCommentInfoBo> result = new ArrayList<>();

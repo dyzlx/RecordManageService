@@ -2,6 +2,8 @@ package com.dyz.recordservice.sal.service.impl;
 
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
+import com.dyz.recordservice.common.model.UserContext;
+import com.dyz.recordservice.common.model.UserContextHolder;
 import com.dyz.recordservice.domain.entity.RFile;
 import com.dyz.recordservice.domain.entity.Record;
 import com.dyz.recordservice.domain.repository.RCommentRepository;
@@ -55,8 +57,8 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public List<RecordInfoBo> queryRecordInfo(@NotNull RecordQueryBo queryBo) {
-        log.info("begin to query record info, queryBo = {}", queryBo);
+    public List<RecordInfoBo> queryRecordInfo(RecordQueryBo queryBo) {
+        log.info("begin to query record info, queryBo = {}, user context = {}", queryBo, getUserContext());
         if (Objects.isNull(queryBo)) {
             throw new IllegalParamException(0, "param is null");
         }
@@ -80,18 +82,18 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public Integer createRecord(MultipartFile[] pictures, @NotNull RecordCreateBo createBo, @NotNull Integer userId) {
-        log.info("begin to create record, record title = {}, userId = {}", createBo.getTitle(), userId);
-        if (!ObjectUtils.allNotNull(createBo, userId)) {
+    public Integer createRecord(MultipartFile[] pictures, RecordCreateBo createBo) {
+        log.info("begin to create record, createBo = {}, user context = {}", createBo, getUserContext());
+        if (Objects.isNull(createBo)) {
             throw new IllegalParamException(0, "param is null");
         }
         Record record = Record.builder().content(createBo.getContent()).createTime(new Date())
-                .title(createBo.getTitle()).userId(userId).build();
+                .title(createBo.getTitle()).userId(getUserId()).build();
         recordRepository.save(record);
         log.info("record {} has saved", record);
         if (Objects.nonNull(pictures) && pictures.length != 0) {
             log.info("record pictures count is {}, begin to save pictures", pictures.length);
-            List<Integer> pictureIds = logicFileAccess.uploadFiles(transferMultipartFiles(pictures), userId);
+            List<Integer> pictureIds = logicFileAccess.uploadFiles(transferMultipartFiles(pictures));
             log.info("pictures have saved, picture ids = {}", pictureIds);
             for (Integer id : pictureIds) {
                 RFile recordFile = RFile.builder().fileId(id).recordId(record.getId()).build();
@@ -104,12 +106,12 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public void deleteRecord(@NotNull Integer recordId, @NotNull Integer userId) {
-        log.info("begin to delete record, recordId = {}, userId = {}", recordId, userId);
-        if (!ObjectUtils.allNotNull(recordId, userId)) {
+    public void deleteRecord(Integer recordId) {
+        log.info("begin to delete record, recordId = {}, user context = {}", recordId, getUserContext());
+        if (Objects.isNull(recordId)) {
             throw new IllegalParamException(0, "param is null");
         }
-        Record record = recordRepository.queryByIdAndUserId(recordId, userId);
+        Record record = recordRepository.queryByIdAndUserId(recordId, getUserId());
         if (Objects.isNull(record)) {
             log.error("no such record");
             throw new NoDataException(0, "no such record");
@@ -120,7 +122,7 @@ public class RecordServiceImpl implements RecordService {
         List<Integer> files = recordFiles.stream().map(RFile::getFileId).collect(Collectors.toList());
         log.info("delete record files, fileIds = {}", files);
         if (CollectionUtils.isNotEmpty(files)) {
-            logicFileAccess.deleteLogicFiles(files, userId);
+            logicFileAccess.deleteLogicFiles(files);
             log.info("delete relation of record and file");
             rFileRepository.deleteAll(recordFiles);
         }
@@ -134,10 +136,10 @@ public class RecordServiceImpl implements RecordService {
      * @return
      */
     private MultipartFile[] transferMultipartFiles(MultipartFile[] files) {
-        log.info("begin to transfer multipart files, count = {}", files.length);
         if (Objects.isNull(files)) {
             return null;
         }
+        log.info("begin to transfer multipart files, count = {}", files.length);
         MultipartFile[] resultFiles = new MultipartFile[files.length];
         int fileIndex = 0;
         for (MultipartFile file : files) {
@@ -156,5 +158,23 @@ public class RecordServiceImpl implements RecordService {
         }
         log.info("end of transfer multipart file");
         return resultFiles;
+    }
+
+    /**
+     * get user id from user context
+     *
+     * @return
+     */
+    public Integer getUserId() {
+        return getUserContext().getUserId();
+    }
+
+    /**
+     * get user context from user context holder
+     *
+     * @return
+     */
+    public UserContext getUserContext() {
+        return UserContextHolder.getUserContext();
     }
 }

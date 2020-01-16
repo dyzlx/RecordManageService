@@ -11,31 +11,26 @@ import java.util.List;
 public interface RCommentService {
 
     /**
-     *
      * @param queryBo
      * @return
      */
-    List<RCommentInfoBo> queryRecordCommentInfo(@NotNull RCommentQueryBo queryBo);
+    List<RCommentInfoBo> queryRecordCommentInfo(RCommentQueryBo queryBo);
 
     /**
-     *
-     * @param userId
+     * @param createBo
      * @return
      */
-    Integer createRecordComment(@NotNull RCommentCreateBo createBo, @NotNull Integer userId);
+    Integer createRecordComment(RCommentCreateBo createBo);
 
     /**
-     *
-     * @param commentId
-     * @param userId
-     */
-    void deleteRecordComment(@NotNull Integer recordId, @NotNull Integer commentId, @NotNull Integer userId);
-
-    /**
-     *
      * @param recordId
-     * @param userId
+     * @param commentId
+     */
+    void deleteRecordComment(Integer recordId, Integer commentId);
+
+    /**
+     * @param recordId
      * @return
      */
-    Integer getRecordCommentCount(@NotNull Integer recordId, @NotNull Integer userId);
+    Integer getRecordCommentCount(Integer recordId);
 }

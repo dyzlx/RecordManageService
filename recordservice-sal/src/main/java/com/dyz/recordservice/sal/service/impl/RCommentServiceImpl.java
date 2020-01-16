@@ -6,6 +6,8 @@ import com.dyz.commentservice.client.model.CommentQueryInfo;
 import com.dyz.recordservice.common.constant.ServiceConstant;
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
+import com.dyz.recordservice.common.model.UserContext;
+import com.dyz.recordservice.common.model.UserContextHolder;
 import com.dyz.recordservice.common.util.DateHandler;
 import com.dyz.recordservice.domain.entity.RComment;
 import com.dyz.recordservice.domain.repository.RCommentRepository;
@@ -42,7 +44,7 @@ public class RCommentServiceImpl implements RCommentService {
 
     @Override
     public List<RCommentInfoBo> queryRecordCommentInfo(@NotNull RCommentQueryBo queryBo) {
-        log.info("begin to query record comments info, queryBo = {}", queryBo);
+        log.info("begin to query record comments info, queryBo = {}, user context = {}", queryBo, getUserContext());
         if (Objects.isNull(queryBo)) {
             throw new IllegalParamException(0, "param is null");
         }
@@ -70,12 +72,12 @@ public class RCommentServiceImpl implements RCommentService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public Integer createRecordComment(@NotNull RCommentCreateBo createBo, @NotNull Integer userId) {
-        log.info("begin to create record comment, createBo = {}, userId = {}", createBo, userId);
-        if(!ObjectUtils.allNotNull(createBo.getContent(), createBo.getParentId(), createBo.getRecordId())){
+    public Integer createRecordComment(RCommentCreateBo createBo) {
+        log.info("begin to create record comment, createBo = {}, user context = {}", createBo, getUserId());
+        if (!ObjectUtils.allNotNull(createBo.getContent(), createBo.getParentId(), createBo.getRecordId())) {
             throw new IllegalParamException(0, "param is null");
         }
-        Integer commentId = commentAccess.createComments(createBo, userId);
+        Integer commentId = commentAccess.createComments(createBo);
         RComment rComment = RComment.builder()
                 .commentId(commentId)
                 .parentId(createBo.getParentId())
@@ -89,30 +91,48 @@ public class RCommentServiceImpl implements RCommentService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public void deleteRecordComment(@NotNull Integer recordId, @NotNull Integer commentId, @NotNull Integer userId) {
-        log.info("begin to delete record comment, recordId = {}, commentId = {}, userId = {}", recordId, commentId, userId);
-        if(!ObjectUtils.allNotNull(recordId, commentId, userId)){
+    public void deleteRecordComment(Integer recordId, Integer commentId) {
+        log.info("begin to delete record comment, recordId = {}, commentId = {}, user context = {}", recordId, commentId, getUserId());
+        if (!ObjectUtils.allNotNull(recordId, commentId)) {
             throw new IllegalParamException(0, "param is null");
         }
         RComment rComment = rCommentRepository.queryByRecordIdAndCommentId(recordId, commentId);
-        if(Objects.isNull(rComment)){
+        if (Objects.isNull(rComment)) {
             log.error("no such record comment, recordId = {} commentId = {}", recordId, commentId);
             throw new NoDataException(0, "no such record comment");
         }
-        commentAccess.deleteComments(commentId, userId);
+        commentAccess.deleteComments(commentId);
         log.info("delete local data");
         rCommentRepository.delete(rComment);
         log.info("end of delete record comment");
     }
 
     @Override
-    public Integer getRecordCommentCount(@NotNull Integer recordId, @NotNull Integer userId) {
-        log.info("begin to query record comment count, recordId = {}, userId = {}", recordId, userId);
-        if(!ObjectUtils.allNotNull(recordId, userId)){
+    public Integer getRecordCommentCount(Integer recordId) {
+        log.info("begin to query record comment count, recordId = {}, user context = {}", recordId, getUserContext());
+        if (Objects.isNull(recordId)) {
             throw new IllegalParamException(0, "param is null");
         }
         int count = rCommentRepository.countByRecordId(recordId);
         log.info("end of query record comment count = {}", count);
         return count;
+    }
+
+    /**
+     * get user id from user context
+     *
+     * @return
+     */
+    public Integer getUserId() {
+        return getUserContext().getUserId();
+    }
+
+    /**
+     * get user context from user context holder
+     *
+     * @return
+     */
+    public UserContext getUserContext() {
+        return UserContextHolder.getUserContext();
     }
 }

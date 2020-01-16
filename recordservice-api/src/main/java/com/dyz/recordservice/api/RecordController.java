@@ -1,6 +1,7 @@
 package com.dyz.recordservice.api;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +22,36 @@ import com.dyz.recordservice.sal.service.RecordService;
 @RequestMapping(value = "records")
 public class RecordController {
 
-	@Autowired
-	private RecordService recordService;
+    @Autowired
+    private RecordService recordService;
 
-	@RequestMapping(value = "", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-	public ResponseEntity<Result> queryRecord(
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
+    public ResponseEntity<Result> queryRecord(
             @RequestParam(required = false) Integer recordId,
-			@RequestParam(required = false) String title,
-			@RequestParam(required = false) Integer userId,
-			@RequestParam(required = false) String fromTime,
-			@RequestParam(required = false) String toTime) {
-		RecordQueryBo queryBo = RecordModelTranslator.toBo(recordId, title, userId, fromTime, toTime);
-		List<RecordInfoVo> result = RecordModelTranslator.toVoList(recordService.queryRecordInfo(queryBo));
-		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(result).build());
-	}
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) String fromTime,
+            @RequestParam(required = false) String toTime) {
+        RecordQueryBo queryBo = RecordModelTranslator.toBo(recordId, title, userId, fromTime, toTime);
+        List<RecordInfoVo> result = RecordModelTranslator.toVoList(recordService.queryRecordInfo(queryBo));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(result).build());
+    }
 
-	@RequestMapping(value = "", method = RequestMethod.POST,
-			produces = { "application/json","application/xml" },
-			consumes = { "multipart/form-data" })
-	public ResponseEntity<Result> createRecord(
-			@RequestParam MultipartFile[] pictures,
-			@RequestParam String title,
-			@RequestParam String content,
-			@RequestHeader Integer userId) {
-		Integer id = recordService.createRecord(pictures, RecordModelTranslator.toBo(title, content), userId);
-		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
-	}
+    @RequestMapping(value = "", method = RequestMethod.POST,
+            produces = {"application/json", "application/xml"},
+            consumes = {"multipart/form-data"})
+    public ResponseEntity<Result> createRecord(
+            @RequestParam MultipartFile[] pictures,
+            @RequestParam String title,
+            @RequestParam String content) {
+        Integer id = recordService.createRecord(pictures, RecordModelTranslator.toBo(title, content));
+        return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
+    }
 
-	@RequestMapping(value = "{recordId}", method = RequestMethod.DELETE,
-			produces = { "application/json","application/xml" })
-	public ResponseEntity<Result> deleteRecord(@PathVariable Integer recordId, @RequestHeader Integer userId) {
-		recordService.deleteRecord(recordId, userId);
-		return ResponseEntity.status(HttpStatus.OK).body(Result.builder().build());
-	}
+    @RequestMapping(value = "{recordId}", method = RequestMethod.DELETE,
+            produces = {"application/json", "application/xml"})
+    public ResponseEntity<Result> deleteRecord(@PathVariable Integer recordId) {
+        recordService.deleteRecord(recordId);
+        return ResponseEntity.status(HttpStatus.OK).body(Result.builder().build());
+    }
 }

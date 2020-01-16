@@ -42,10 +42,8 @@ public class RCommentController {
     @RequestMapping(value = "", method = RequestMethod.POST,
             produces = {"application/json", "application/xml"},
             consumes = {"application/json", "application/xml"})
-    public ResponseEntity<Result> createRecordComment(
-            @Validated @RequestBody RCommentCreateVo createVo,
-            @RequestHeader Integer userId) {
-        Integer id = rCommentService.createRecordComment(RCommentModelTranslator.toBo(createVo), userId);
+    public ResponseEntity<Result> createRecordComment(@Validated @RequestBody RCommentCreateVo createVo) {
+        Integer id = rCommentService.createRecordComment(RCommentModelTranslator.toBo(createVo));
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(id).build());
     }
 
@@ -53,17 +51,14 @@ public class RCommentController {
             produces = {"application/json", "application/xml"})
     public ResponseEntity<Result> deleteRecordComment(
             @RequestParam Integer recordId,
-            @RequestParam Integer commentId,
-            @RequestHeader Integer userId) {
-        rCommentService.deleteRecordComment(recordId, commentId, userId);
+            @RequestParam Integer commentId) {
+        rCommentService.deleteRecordComment(recordId, commentId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().build());
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET, produces = {"application/json", "application/xml"})
-    public ResponseEntity<Result> queryRecordCommentCount(
-            @RequestParam Integer recordId,
-            @RequestHeader Integer userId) {
-        Integer count = rCommentService.getRecordCommentCount(recordId, userId);
+    public ResponseEntity<Result> queryRecordCommentCount(@RequestParam Integer recordId) {
+        Integer count = rCommentService.getRecordCommentCount(recordId);
         return ResponseEntity.status(HttpStatus.OK).body(Result.builder().content(count).build());
     }
 }
