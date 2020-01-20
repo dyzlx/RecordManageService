@@ -2,8 +2,6 @@ package com.dyz.recordservice.sal.service.impl;
 
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
-import com.dyz.recordservice.common.model.UserContext;
-import com.dyz.recordservice.common.model.UserContextHolder;
 import com.dyz.recordservice.domain.entity.RFile;
 import com.dyz.recordservice.domain.entity.Record;
 import com.dyz.recordservice.domain.repository.RCommentRepository;
@@ -20,7 +18,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -29,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,6 +33,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.dyz.recordservice.common.model.UserContextHolder.getUserContext;
+import static com.dyz.recordservice.common.model.UserContextHolder.getUserId;
 
 @Slf4j
 @Service
@@ -158,23 +156,5 @@ public class RecordServiceImpl implements RecordService {
         }
         log.info("end of transfer multipart file");
         return resultFiles;
-    }
-
-    /**
-     * get user id from user context
-     *
-     * @return
-     */
-    public Integer getUserId() {
-        return getUserContext().getUserId();
-    }
-
-    /**
-     * get user context from user context holder
-     *
-     * @return
-     */
-    public UserContext getUserContext() {
-        return UserContextHolder.getUserContext();
     }
 }

@@ -30,4 +30,13 @@ public class UserContextHolder {
     private static final UserContext createEmptyUserContext() {
         return new UserContext();
     }
+
+    /**
+     * get user id from user context
+     *
+     * @return
+     */
+    public static Integer getUserId() {
+        return getUserContext().getUserId();
+    }
 }

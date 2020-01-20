@@ -1,14 +1,8 @@
 package com.dyz.recordservice.sal.service.impl;
 
 
-import com.dyz.commentservice.client.model.CommentInfo;
-import com.dyz.commentservice.client.model.CommentQueryInfo;
-import com.dyz.recordservice.common.constant.ServiceConstant;
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
-import com.dyz.recordservice.common.model.UserContext;
-import com.dyz.recordservice.common.model.UserContextHolder;
-import com.dyz.recordservice.common.util.DateHandler;
 import com.dyz.recordservice.domain.entity.RComment;
 import com.dyz.recordservice.domain.repository.RCommentRepository;
 import com.dyz.recordservice.sal.access.CommentAccess;
@@ -19,18 +13,17 @@ import com.dyz.recordservice.sal.service.RCommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.dyz.recordservice.common.model.UserContextHolder.getUserContext;
 
 @Slf4j
 @Service
@@ -73,7 +66,7 @@ public class RCommentServiceImpl implements RCommentService {
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public Integer createRecordComment(RCommentCreateBo createBo) {
-        log.info("begin to create record comment, createBo = {}, user context = {}", createBo, getUserId());
+        log.info("begin to create record comment, createBo = {}, user context = {}", createBo, getUserContext());
         if (!ObjectUtils.allNotNull(createBo.getContent(), createBo.getParentId(), createBo.getRecordId())) {
             throw new IllegalParamException(0, "param is null");
         }
@@ -92,7 +85,7 @@ public class RCommentServiceImpl implements RCommentService {
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public void deleteRecordComment(Integer recordId, Integer commentId) {
-        log.info("begin to delete record comment, recordId = {}, commentId = {}, user context = {}", recordId, commentId, getUserId());
+        log.info("begin to delete record comment, recordId = {}, commentId = {}, user context = {}", recordId, commentId, getUserContext());
         if (!ObjectUtils.allNotNull(recordId, commentId)) {
             throw new IllegalParamException(0, "param is null");
         }
@@ -116,23 +109,5 @@ public class RCommentServiceImpl implements RCommentService {
         int count = rCommentRepository.countByRecordId(recordId);
         log.info("end of query record comment count = {}", count);
         return count;
-    }
-
-    /**
-     * get user id from user context
-     *
-     * @return
-     */
-    public Integer getUserId() {
-        return getUserContext().getUserId();
-    }
-
-    /**
-     * get user context from user context holder
-     *
-     * @return
-     */
-    public UserContext getUserContext() {
-        return UserContextHolder.getUserContext();
     }
 }
