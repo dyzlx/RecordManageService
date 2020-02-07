@@ -1,7 +1,7 @@
 server:
   port: 8882
   servlet:
-    context-path: /recordservice
+    context-path: /
 logging:
   config: classpath:log4j2.xml
   level:

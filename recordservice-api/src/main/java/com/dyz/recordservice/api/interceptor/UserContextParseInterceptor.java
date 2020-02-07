@@ -18,9 +18,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
-@WebFilter(filterName = "userContextParseFilter", urlPatterns = {"/recordservice/*"})
+@WebFilter(filterName = "userContextParseFilter", urlPatterns = {"/*"})
 @Component
 public class UserContextParseInterceptor implements Filter {
 
