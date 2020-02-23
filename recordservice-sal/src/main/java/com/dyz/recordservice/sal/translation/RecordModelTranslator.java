@@ -20,7 +20,7 @@ public class RecordModelTranslator {
 	}
 
 	public static List<RecordInfoBo> toBoList(List<Record> records) {
-		if (CollectionUtils.isEmpty(records)) {
+		if (Objects.isNull(records)) {
 			return null;
 		}
 		List<RecordInfoBo> results = new ArrayList<>();
