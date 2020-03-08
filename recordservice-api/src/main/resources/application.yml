@@ -3,7 +3,7 @@ server:
   servlet:
     context-path: /
 logging:
-  config: classpath:log4j2.xml
+  file: /Volumes/DYZ-document/Program/X-CodeRunSpace/log/recordservice/record-service.log
   level:
     com.dyz.filxeservice.client.LogicFileClient: DEBUG
     com.dyz.commentservice.client.CommentClient: DEBUG
