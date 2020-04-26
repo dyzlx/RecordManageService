@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@WebFilter(filterName = "userContextParseFilter", urlPatterns = {"/*"})
-@Component
+@WebFilter(filterName = "userContextParseFilter", urlPatterns = {"/record_comments/*", "/records/*"})
 public class UserContextParseInterceptor implements Filter {
 
     @Override
@@ -37,12 +36,12 @@ public class UserContextParseInterceptor implements Filter {
         String authToken = httpServletRequest.getHeader(UserContext.AUTH_TOKEN);
         // userId and correlationId is required
         if (!ObjectUtils.allNotNull(userIdStr, correlationId)) {
-            log.error("required header param is null");
+            log.error("required header userId and correlationId param is null");
             throw new IllegalParamException(0, "required header param is null");
         }
         List<String> roles = null;
         if(Objects.nonNull(rolesStr)) {
-            roles = new ArrayList<>(Arrays.asList(rolesStr.split(",")));
+            roles = Arrays.asList(rolesStr.split(","));
         }
         Integer userId = Integer.parseInt(userIdStr);
         currentUserContext.setUserId(userId);

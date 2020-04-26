@@ -2,12 +2,27 @@ server:
   port: 8882
   servlet:
     context-path: /
+management:
+  server:
+    address: 127.0.0.1
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 logging:
   file: /Volumes/DYZ-document/Program/X-CodeRunSpace/log/recordservice/record-service.log
   level:
     com.dyz.filxeservice.client.LogicFileClient: DEBUG
     com.dyz.commentservice.client.CommentClient: DEBUG
+    com.netflix.discovery: ERROR
 spring:
+  profiles:
+    include: discover-eureka
   application:
     name: recordservice
   datasource:
@@ -27,12 +42,3 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
-eureka:
-  instance:
-    # 使用服务的IP而不是服务器名称，确保在容器环境下正常
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: http://${DMS_DISCOVER_HOST:127.0.0.1}:8761/eureka/

@@ -1,0 +1,9 @@
+eureka:
+  instance:
+    # 使用服务的IP而不是服务器名称，确保在容器环境下正常
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${DMS_DISCOVER_HOST:127.0.0.1}:8761/eureka/
