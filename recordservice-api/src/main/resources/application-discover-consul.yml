@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    consul:
+      host: ${DMS_DISCOVER_HOST:127.0.0.1}
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        enabled: true
+        register: true
+        deregister: true

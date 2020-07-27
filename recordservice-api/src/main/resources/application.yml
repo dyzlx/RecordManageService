@@ -15,14 +15,14 @@ management:
       exposure:
         include: '*'
 logging:
-  file: /Volumes/DYZ-document/Program/X-CodeRunSpace/log/recordservice/record-service.log
+  file: /Volumes/DYZ-document/JavaProgram/X-CodeRunSpace/log/recordservice/record-service.log
   level:
     com.dyz.filxeservice.client.LogicFileClient: DEBUG
     com.dyz.commentservice.client.CommentClient: DEBUG
     com.netflix.discovery: ERROR
 spring:
   profiles:
-    include: discover-eureka
+    include: discover-consul
   application:
     name: recordservice
   datasource:
