@@ -22,9 +22,13 @@ logging:
     com.netflix.discovery: ERROR
 spring:
   profiles:
-    include: discover-consul
+    include: ["discover-consul", "ribbon"]
   application:
     name: recordservice
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DMS_DB_HOST:127.0.0.1}:3306/recorddb?charset=utf8mb4&useSSL=false
