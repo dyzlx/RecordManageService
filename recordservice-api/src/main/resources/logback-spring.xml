@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include
+            resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <springProperty scope="context" name="appName"
+                    source="spring.application.name"/>
+    <springProperty scope="context" name="appVersion"
+                    source="spring.application.version" />
+
+    <springProperty scope="context" name="logBackLevel"
+                    source="dms.log.level" />
+    <springProperty scope="context" name="LOG_PATH"
+                    source="dms.log.path" />
+    <springProperty scope="context" name="LOG_MAX_FILE_SIZE"
+                    source="dms.log.max-file-size" />
+    <springProperty scope="context" name="LOG_MAX_HISTORY"
+                    source="dms.log.max-history" />
+    <springProperty scope="context" name="LOG_TOTAL_SIZE_CAP"
+                    source="dms.log.total-size-cap" />
+
+    <conversionRule conversionWord="clr"
+                    converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %-5level [%line] %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="LOG_FILE"
+              value="${BUILD_FOLDER:-build}/${appName}" />
+
+    <appender name="console"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <filter
+                class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="file"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${appName}.log</File>
+        <filter
+                class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${appName}-%d{yyyyMMdd}.log.%i
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%line] %msg%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</Pattern>
+        </layout>
+    </appender>
+    <appender name="error-log"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${appName}-error.log</File>
+        <filter
+                class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${appName}-error-%d{yyyyMMdd}.log.%i
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%line] %msg%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</Pattern>
+        </layout>
+    </appender>
+
+    <logger name="org.reflections" level="OFF" />
+    <logger name="org.hibernate" level="OFF" />
+    <logger name="druid.sql.Statement" level="OFF" />
+
+    <root level="${logBackLevel}">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+        <appender-ref ref="error-log" />
+    </root>
+</configuration>
+

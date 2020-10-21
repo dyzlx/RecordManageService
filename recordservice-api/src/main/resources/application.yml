@@ -15,20 +15,24 @@ management:
       exposure:
         include: '*'
 logging:
-  file: /Volumes/DYZ-document/JavaProgram/X-CodeRunSpace/log/recordservice/record-service.log
   level:
     com.dyz.filxeservice.client.LogicFileClient: DEBUG
     com.dyz.commentservice.client.CommentClient: DEBUG
     com.netflix.discovery: ERROR
 spring:
-  profiles:
-    include: ["discover-consul", "ribbon"]
-  application:
-    name: recordservice
   cloud:
     loadbalancer:
       ribbon:
         enabled: true
+    consul:
+      host: ${DMS_DISCOVER_HOST:127.0.0.1}
+      port: 8500
+      discovery:
+        instance-id: ${spring.application.name}-${server.port}
+        prefer-ip-address: true
+        enabled: true
+        register: true
+        deregister: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DMS_DB_HOST:127.0.0.1}:3306/recorddb?charset=utf8mb4&useSSL=false
@@ -46,3 +50,10 @@ spring:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
+ribbon:
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RoundRobinRule
+  ConnectTimeout: 5000
+  ReadTimeout: 5000
+  OkToRetryOnAllOperations: false
+  MaxAutoRetriesNextServer: 2
+  MaxAutoRetries: 1
