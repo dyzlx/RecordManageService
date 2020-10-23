@@ -2,6 +2,7 @@ package com.dyz.recordservice.api.translation;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,8 +36,10 @@ public class RecordModelTranslator {
 		return queryBo;
 	}
 
-	public static RecordCreateBo toBo(String title, String content) {
-		return RecordCreateBo.builder().title(title).content(content).build();
+	public static RecordCreateBo toBo(String title, String content, Integer[] pictureIds) {
+		return RecordCreateBo.builder()
+				.title(title).content(content).pictureIds(Arrays.asList(pictureIds))
+				.build();
 	}
 
 	public static RecordInfoVo toVo(RecordInfoBo bo) {

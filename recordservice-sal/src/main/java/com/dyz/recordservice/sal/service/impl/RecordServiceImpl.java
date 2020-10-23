@@ -1,5 +1,6 @@
 package com.dyz.recordservice.sal.service.impl;
 
+import com.dyz.filxeservice.client.model.LogicFileInfo;
 import com.dyz.recordservice.common.execption.IllegalParamException;
 import com.dyz.recordservice.common.execption.NoDataException;
 import com.dyz.recordservice.domain.entity.RFile;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -89,14 +91,25 @@ public class RecordServiceImpl implements RecordService {
                 .title(createBo.getTitle()).userId(getUserId()).build();
         recordRepository.save(record);
         log.info("record {} has saved", record);
+        List<Integer> pictureIds = new ArrayList<>();
         if (Objects.nonNull(pictures) && pictures.length != 0) {
-            log.info("record pictures count is {}, begin to save pictures", pictures.length);
-            List<Integer> pictureIds = logicFileAccess.uploadFiles(transferMultipartFiles(pictures));
+            log.info("record pictures count is {}, begin to trigger file service to save pictures", pictures.length);
+            pictureIds = logicFileAccess.uploadFiles(transferMultipartFiles(pictures));
             log.info("pictures have saved, picture ids = {}", pictureIds);
-            for (Integer id : pictureIds) {
-                RFile recordFile = RFile.builder().fileId(id).recordId(record.getId()).build();
-                rFileRepository.save(recordFile);
+        } else if (CollectionUtils.isNotEmpty(createBo.getPictureIds())) {
+            // check file is exist from file service by id
+            for (Integer id : createBo.getPictureIds()) {
+                List<LogicFileInfo> logicFileInfos = logicFileAccess.queryLogicFileById(id);
+                if(CollectionUtils.isEmpty(logicFileInfos)) {
+                    log.error("no such logic file found, id = {}", id);
+                    throw new NoDataException("no such logic file found, id=" + id);
+                }
             }
+            pictureIds = createBo.getPictureIds();
+        }
+        for (Integer id : pictureIds) {
+            RFile recordFile = RFile.builder().fileId(id).recordId(record.getId()).build();
+            rFileRepository.save(recordFile);
         }
         log.info("end of create record");
         return record.getId();
