@@ -5,7 +5,6 @@ import com.dyz.recordservice.sal.bo.RCommentCreateBo;
 import com.dyz.recordservice.sal.bo.RCommentInfoBo;
 import com.dyz.recordservice.sal.bo.RCommentQueryBo;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface RCommentService {
